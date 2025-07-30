@@ -1,0 +1,83 @@
+* {
+    font-family: system-ui;
+    font-size: 1rem;
+}
+
+
+button, input {
+    margin: 0.25rem;
+}
+
+.lock {
+    display: flex;
+    flex-direction: row;
+}
+
+.adjustBan, .newBan, .changeLimit {
+    display: flex;
+    flex-direction: row;
+    height: fit-content;
+    align-items: center;
+}
+
+.status {
+    font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.status p {
+    text-align: center;
+}
+
+.status, .lock, .ban, .changeLimit {
+    /* border: 1px solid black; */
+    padding: 0.25rem;
+    margin: 1rem;
+}
+
+option[disabled] {
+    color: gray;
+}
+
+.adjustBan {
+    display: flex;
+    justify-content: space-between;
+}
+
+.status {
+    background-color: orange;
+}
+
+.changeLimit, .lock, .adjustBan, .clearBan, .newBan {
+    background-color: lightgray;
+}
+
+.clearBan {
+    display: flex;
+    justify-content: center;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+  width: 12rem;      /* e.g. 12rem ≈ 192px */
+  max-width: 100%;   /* never overflow its container */
+  box-sizing: border-box;
+}
+
+select {
+    margin-left: 0.25rem;
+}
+
+#labelLimit {
+    font-weight: bold;
+}
+
+#labelLock {
+    font-style: italic;
+}
+
+.changeLimit {
+    flex-direction: column;
+}

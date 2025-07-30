@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lockin!</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="main">
+
+        <div class="status">
+            <p class="statusReport">Tab limit is <span id="labelLimit">unlimited</span></p>
+            <p class="statusReport">Tab is <span id="labelLock">not</span> locked in</p>
+        </div>
+        
+        <div class="changeLimit">
+            <div class="inpLimit"> 
+                <input type="number" placeholder="Change tab limit" id="desiredTabCount" min="1">
+                <button id="changeLimitBtn" type="submit">Submit</button>
+            </div>
+
+            <div>
+                <button id="resetLimitBtn" type="submit">Reset Limit</button>
+            </div>
+
+        </div>
+
+        <div class="lock">
+            <input type="checkbox" id="checkboxLock">
+            <p class="lockLabel">Lock tab</p>
+        </div>
+
+        <div class="ban">
+            <div class="newBan">
+                <input type="text" id="inputBanSite" placeholder="Ban site (e.g &quot;insta&quot;)">
+                <button id="submitBanBtn" type="submit">Submit</button>
+            </div>
+
+            <div class="adjustBan">
+                <select id="selectSite">
+                </select>
+                <button id="removeBanBtn">Unban</button>
+            </div>
+
+            <div class="clearBan">
+                <button id="clearAllBansBtn">Clear All Bans</button>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script type="module" src="main.js"></script>
+
+</body>
+</html>
