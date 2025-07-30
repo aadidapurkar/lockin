@@ -22,16 +22,18 @@ clearAllBansBtn.addEventListener("click",clearBans)
 removeBanBtn.addEventListener("click", removeBan)
 resetLimitBtn.addEventListener("click",resetLimit)
 
-// Intiialise correct status in extension's popup HTML
+// Retrieve previous lockin state from local storage
 async function initStatus(){
     const data = await retrieveStorage(["tabLimit", "tabLock","tabLockID"]);
     const tabs = await getTabs({active: true, lastFocusedWindow: true });
 
+    // Retrieve tab limit
     if(data.tabLimit){
         if(data.tabLimit < 1000){
         labelLimit.textContent = data.tabLimit;}
     }
 
+    // Retrieve tab lock
     if(data.tabLock && data.tabLockID && tabs[0].id == data.tabLockID && data.tabLock == true){
         checkboxLock.checked = true;
         labelLock.style.display = "none";
@@ -39,8 +41,21 @@ async function initStatus(){
 
 }
 
+// Set HTML page's dropdown options based on current state of banned sites in storage
+async function populateDropdown(){
+    const data = await retrieveStorage(["banned"]);
+    selectSite.innerHTML = '';
+
+    for(let i = 0; i < data.banned.length; i++){
+        const option = document.createElement("option");
+        option.value = data.banned[i];
+        option.textContent = data.banned[i];
+        selectSite.appendChild(option);
+    }
+}
+
 initStatus()
-populateDropdown()
+populateDropdown() // This function is separated from initStatus because it is used both for init + updating
 
 // Update tab limit
 async function updateLimit(){
@@ -61,6 +76,7 @@ async function updateLock(){
 
     if(checkboxLock.checked){
         labelLock.style.display = "none";
+        console.log(`Locking tab ${tabs[0].title}`)
         await setStorage({tabLock: true, tabLockID: tabs[0].id, tabWindowID: tabs[0].windowId}); //
 
     } else {
@@ -84,25 +100,6 @@ async function clearBans(){
     await setStorage({banned: []});
     await populateDropdown()
 
-}
-
-// Populate dropdown
-async function populateDropdown(){
-    const data = await retrieveStorage(["banned"]);
-    selectSite.innerHTML = '';
-    // const option = document.createElement("option");
-    // option.value = '';
-    // option.disabled = true;
-    // option.selected = true;
-    // option.textContent = "Choose";
-    // selectSite.append(option);
-
-    for(let i = 0; i < data.banned.length; i++){
-        const option = document.createElement("option");
-        option.value = data.banned[i];
-        option.textContent = data.banned[i];
-        selectSite.appendChild(option);
-    }
 }
 
 async function removeBan(){

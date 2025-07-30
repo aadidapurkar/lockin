@@ -1,4 +1,5 @@
-// Helper Functions
+// Helper Functions to abstract chrome api
+
 export async function retrieveStorage(paramArr){
     return await chrome.storage.local.get(paramArr);
 }
@@ -27,7 +28,6 @@ export async function switchTab(id){
 
 export async function switchWindow(id) {
   try {
-    // promise-based signature: single object arg
     return await chrome.windows.update({ windowId: id, focused: true });
   } catch (e) {
     //console.error("[switchWindow] failed, retrying:", e);
