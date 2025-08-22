@@ -1,2 +1,10 @@
-Download: https://chromewebstore.google.com/detail/lockin/ekclemfcpeipfokbhiebmppdpecmapeh?authuser=0&hl=en-GB <br>
-Run locally: Download this repository, go to "chrome://extensions" in browser, click "Load unpacked extension", and choose the repo folder
+useful commands
+npm init
+npm init -y (skip terminal inputs)
+npm install --save-dev typescript
+npm install -g typescript
+
+npx tsc --init
+npx tsc
+tsc --watch
+
