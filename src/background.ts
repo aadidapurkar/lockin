@@ -11,33 +11,35 @@ import {
     map,
     merge,
     fromEvent,
+    shareReplay,
+    startWith,
+    switchMap,
 } from "rxjs";
-import {
-    initialState,
-    type Action,
-    type onCommited,
-    type onUpdated,
-    type State,
-} from "./types.js";
-import { HandleTabBan, HandleTabCreation } from "./state.js";
-import { tabChangedURL$, tabCreated$ } from "./observable.js";
+import type { State } from "./types.js";
+import { navCommit$, viewReqStateUpdate$ } from "./observable.js";
+import { render } from "./sideEffects.js";
 console.log("Background");
 
-// Poll to keep backgound script active
-interval(5000).subscribe(() => {});
+/**
+ * Note that background service workers in chrome are not persistent
+ * Therefore, intialState should ideally be intialised from localStorage
+ * Hmm. problem, when the background script is terminated, the reduced state will be lost.
+ * That is, unless, you store two copies of state, one in background, one in localStorage, but that seems hard to manage
+ */
 
-// Merge emissions of Action, starting at an initial state, and applying actions to reduce state
-const state$ = merge(tabChangedURL$)
-    .pipe(
-        scan(
-            (reducedState: State, action: Action) => action.apply(reducedState),
-            initialState,
-        ),
-    )
-    .subscribe(console.log);
+// Define initial state - hard coding for now
+const initialState: State = {
+    bans: ["instagram"],
+    lock: false,
+    open: 0,
+    //exit?
+    //limit?
+};
 
-// detect tab count
-// detect open sites
-// idea
-// every time tabs are changed, update current state (add current focused window, current tabs, current window)
-// do it by  concatmap that with inner observesables of tabs.query() and get current focused tab (concatmap important for order)
+// Master state steam
+const action$ = merge(navCommit$, viewReqStateUpdate$);
+const state$ = action$.pipe(
+    scan((reducedState, action) => action.apply(reducedState), initialState),
+);
+
+state$.subscribe(s => render(s));

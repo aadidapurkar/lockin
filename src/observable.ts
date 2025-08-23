@@ -11,17 +11,23 @@ import {
     map,
     merge,
     fromEvent,
+    shareReplay,
+    startWith,
+    switchMap,
 } from "rxjs";
-import { HandleTabCreation, HandleTabBan } from "./state.js";
-import type { Action, onCommited } from "./types.js";
+import type { Action, navCommit } from "./types.js";
+import { HandleTabBan } from "./state.js";
 
-export const tabCreated$: Observable<Action> =
-    fromEventPattern<chrome.tabs.Tab>(
-        f => chrome.tabs.onCreated.addListener(f),
-        f => chrome.tabs.onCreated.removeListener(f),
-    ).pipe(map(_ => new HandleTabCreation()));
-
-export const tabChangedURL$: Observable<Action> = fromEventPattern<onCommited>(
+// Observable of actions that emits every time the browser makes a navigation commit (basically a tabtries to load some url)
+export const navCommit$: Observable<Action> = fromEventPattern<navCommit>(
     f => chrome.webNavigation.onCommitted.addListener(f),
     f => chrome.webNavigation.onCommitted.removeListener(f),
-).pipe(map((obj: onCommited) => new HandleTabBan(obj.url, obj.tabId)));
+).pipe(
+    map((obj: navCommit) => ({ url: obj.url, tabId: obj.tabId })),
+    map(({ url, tabId }) => new HandleTabBan(url, tabId)),
+);
+
+export const viewReqStateUpdate$: Observable<Action> = fromEventPattern(
+    f => chrome.runtime.onMessage.addListener(f),
+    f => chrome.runtime.onMessage.removeListener(f),
+).pipe();

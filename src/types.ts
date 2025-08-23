@@ -11,35 +11,56 @@ import {
     map,
     merge,
     fromEvent,
+    shareReplay,
+    startWith,
+    switchMap,
 } from "rxjs";
-//////////       STATE PROCESSING   ///////////////////////
+
+// STATE
 export type State = {
-    bannedSites: string[];
-    tabLimit?: number;
-    tabCount: number;
-    tabLock: boolean;
+    /**
+     * Values of arr represent banned websites
+     * e.g "insta" / "instagram" / "https://instagram.com"
+     */
+    bans: string[];
+
+    /**
+     * Defines a limit for total tab count
+     * e.g limit is 15 -> a 16th tab is opened -> the 16th tab is closed
+     */
+    limit?: number;
+
+    /**
+     * Defines whether a particular tab's focus should be locked
+     * If so, then we need an additional value, the tabId to lock to.
+     */
+    lock: false | [true, number];
+
+    /**
+     * Defines the number of tabs currently opened
+     * e.g open = 5, limit = 5 ->  new tab is opened -> close it
+     */
+    open: number;
+
+    /**
+     * Defines a tabId that should be closed
+     * e.g banned site opened -> add to exit -> side effect: tab removal in subscribe call of master state stream
+     */
+    exit?: number | null;
 };
 
-export const initialState: State = {
-    bannedSites: ["instagram"],
-    tabLimit: 10,
-    tabCount: 0,
-    tabLock: false,
-};
-
-//////     CHROME TYPES /////////
-export type onUpdated = [
-    tabId: number,
-    changeInfo: chrome.tabs.OnUpdatedInfo,
-    tab: chrome.tabs.Tab,
-];
-
-export type onCommited =
+// CHROME EVENT TYPES
+export type navCommit =
     chrome.webNavigation.WebNavigationTransitionCallbackDetails;
 
-/////////////// ACTION CLASS INTERFACE ///////////////
-// Info: Observables will be mapped to classes which extend action
-// So in the end, observable emissions will map to a new state
+// CHROME RUNTIME MESSAGES SENT FROM VIEW
+// export type RuntimeMsg = {
+//     action: Action;
+//     sender: chrome.runtime.MessageSender;
+//     sendResponse: (response?: any) => void;
+// };
+
+// ACTION TYPE (ALL OBSERVABLES END UP EMITING THIS)
 export interface Action {
     apply(s: State): State;
 }
