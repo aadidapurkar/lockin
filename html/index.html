@@ -1,16 +1,36 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lockin</title>
-    <link rel="stylesheet" href="../css/style.css">
-</head>
-<body>
-    <div class="container">
-        <h1>Lockin</h1>
-    </div>
-    
-    <script type="module" src="../dist/js/index.js"></script>
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Lockin</title>
+        <link rel="stylesheet" href="../css/style.css" />
+    </head>
+    <body>
+        <div class="container">
+            <h1>Lockin</h1>
+
+            <div class="ban">
+                <div class="newBan">
+                    <input
+                        type="text"
+                        id="inputBanSite"
+                        placeholder='Ban site (e.g "insta")'
+                    />
+                    <button id="submitBanBtn" type="submit">Submit</button>
+                </div>
+
+                <div class="adjustBan">
+                    <select id="selectSite"></select>
+                    <button id="removeBanBtn">Unban</button>
+                </div>
+
+                <div class="clearBan">
+                    <button id="clearAllBansBtn">Clear All Bans</button>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="../dist/js/index.js"></script>
+    </body>
 </html>
