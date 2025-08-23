@@ -58,7 +58,7 @@ export class HandleViewBanRemove implements Action {
 }
 
 export class HandleViewClearBans implements Action {
-    constructor() {}
+    constructor(public readonly placeholder: string) {}
 
     apply(s: State): State {
         return {

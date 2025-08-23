@@ -15,6 +15,12 @@ import {
     startWith,
     switchMap,
 } from "rxjs";
+import {
+    HandleTabBan,
+    HandleViewBanAdd,
+    HandleViewBanRemove,
+    HandleViewClearBans,
+} from "./state.js";
 
 // STATE
 export type State = {
@@ -54,12 +60,18 @@ export type navCommit =
     chrome.webNavigation.WebNavigationTransitionCallbackDetails;
 
 // CHROME RUNTIME MESSAGES SENT FROM VIEW
-// export type RuntimeMsg = {
-//     action: Action;
-//     sender: chrome.runtime.MessageSender;
-//     sendResponse: (response?: any) => void;
-// };
+// type of JSON object sent from popup index.html view runtime messsage
+export type ViewActionReq =
+    | { action: "VIEW_ADD_BAN"; ban: string }
+    | { action: "VIEW_REMOVE_BAN"; ban: string }
+    | { action: "VIEW_CLEAR_BANS"; ban: string };
 
+// helper object to parse this JSON into Actions in background script (message receiver)
+export const actionStringClassMap = {
+    VIEW_ADD_BAN: HandleViewBanAdd,
+    VIEW_REMOVE_BAN: HandleViewBanRemove,
+    VIEW_CLEAR_BANS: HandleViewClearBans,
+};
 // ACTION TYPE (ALL OBSERVABLES END UP EMITING THIS)
 export interface Action {
     apply(s: State): State;

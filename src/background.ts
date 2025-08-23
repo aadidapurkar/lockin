@@ -15,8 +15,13 @@ import {
     startWith,
     switchMap,
 } from "rxjs";
-import type { State } from "./types.js";
-import { navCommit$, viewReqStateUpdate$ } from "./observable.js";
+import {
+    actionStringClassMap,
+    type Action,
+    type State,
+    type ViewActionReq,
+} from "./types.js";
+import { navCommit$, viewAction$, viewCreateAction$ } from "./observable.js";
 import { render } from "./sideEffects.js";
 console.log("Background");
 
@@ -37,7 +42,7 @@ const initialState: State = {
 };
 
 // Master state steam
-const action$ = merge(navCommit$, viewReqStateUpdate$);
+const action$ = merge(navCommit$, viewAction$);
 const state$ = action$.pipe(
     scan((reducedState, action) => action.apply(reducedState), initialState),
 );

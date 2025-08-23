@@ -15,7 +15,12 @@ import {
     startWith,
     switchMap,
 } from "rxjs";
-import type { Action, navCommit } from "./types.js";
+import {
+    actionStringClassMap,
+    type Action,
+    type navCommit,
+    type ViewActionReq,
+} from "./types.js";
 import { HandleTabBan } from "./state.js";
 
 // Observable of actions that emits every time the browser makes a navigation commit (basically a tabtries to load some url)
@@ -27,7 +32,16 @@ export const navCommit$: Observable<Action> = fromEventPattern<navCommit>(
     map(({ url, tabId }) => new HandleTabBan(url, tabId)),
 );
 
-export const viewReqStateUpdate$: Observable<Action> = fromEventPattern(
-    f => chrome.runtime.onMessage.addListener(f),
-    f => chrome.runtime.onMessage.removeListener(f),
-).pipe();
+// Stream of incoming messages, keeping only the message
+// Note: no response sent
+export const viewCreateAction$ = fromEventPattern<
+    [ViewActionReq, chrome.runtime.MessageSender, (response?: any) => void]
+>(
+    handler => chrome.runtime.onMessage.addListener(handler),
+    handler => chrome.runtime.onMessage.removeListener(handler),
+).pipe(map(([message, sender, sendResponse]) => message));
+
+// Map the abovve stream's JSON emissions into emissions of Actions
+export const viewAction$: Observable<Action> = viewCreateAction$.pipe(
+    map((a: ViewActionReq) => new actionStringClassMap[a.action](a.ban)),
+);
