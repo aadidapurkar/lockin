@@ -21,7 +21,7 @@ import {
     type navCommit,
     type ViewActionReq,
 } from "./types.js";
-import { HandleTabBan } from "./state.js";
+import { DoNothing, HandleTabBan } from "./state.js";
 
 // Observable of actions that emits every time the browser makes a navigation commit (basically a tabtries to load some url)
 export const navCommit$: Observable<Action> = fromEventPattern<navCommit>(
@@ -43,5 +43,20 @@ export const viewCreateAction$ = fromEventPattern<
 
 // Map the abovve stream's JSON emissions into emissions of Actions
 export const viewAction$: Observable<Action> = viewCreateAction$.pipe(
-    map((a: ViewActionReq) => new actionStringClassMap[a.action](a.ban)),
+    map((a: ViewActionReq) => {
+        if (a.action === "VIEW_ADD_BAN") {
+            return new actionStringClassMap[a.action](a.ban!);
+        }
+        if (a.action === "VIEW_REMOVE_BAN") {
+            return new actionStringClassMap[a.action](a.ban!);
+        }
+        if (a.action === "VIEW_CLEAR_BANS") {
+            return new actionStringClassMap[a.action]();
+        }
+        if (a.action === "VIEW_LOCK_TAB") {
+            return new actionStringClassMap[a.action](a.lock!, -1);
+        } else {
+            return new DoNothing();
+        }
+    }),
 );

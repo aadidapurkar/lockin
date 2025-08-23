@@ -35,7 +35,7 @@ console.log("Background");
 // Define initial state - hard coding for now
 const initialState: State = {
     bans: ["instagram"],
-    lock: false,
+    lock: [false, -1],
     open: 0,
     //exit?
     //limit?

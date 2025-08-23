@@ -16,6 +16,7 @@ import {
     switchMap,
 } from "rxjs";
 import {
+    HandleLockTab,
     HandleTabBan,
     HandleViewBanAdd,
     HandleViewBanRemove,
@@ -40,7 +41,7 @@ export type State = {
      * Defines whether a particular tab's focus should be locked
      * If so, then we need an additional value, the tabId to lock to.
      */
-    lock: false | [true, number];
+    lock: [boolean, number];
 
     /**
      * Defines the number of tabs currently opened
@@ -60,17 +61,25 @@ export type navCommit =
     chrome.webNavigation.WebNavigationTransitionCallbackDetails;
 
 // CHROME RUNTIME MESSAGES SENT FROM VIEW
+
 // type of JSON object sent from popup index.html view runtime messsage
-export type ViewActionReq =
-    | { action: "VIEW_ADD_BAN"; ban: string }
-    | { action: "VIEW_REMOVE_BAN"; ban: string }
-    | { action: "VIEW_CLEAR_BANS"; ban: string };
+export type ViewActionReq = {
+    action:
+        | "VIEW_ADD_BAN"
+        | "VIEW_REMOVE_BAN"
+        | "VIEW_CLEAR_BANS"
+        | "VIEW_LOCK_TAB";
+    ban?: string;
+    lock?: boolean;
+    lockTabId?: number;
+};
 
 // helper object to parse this JSON into Actions in background script (message receiver)
 export const actionStringClassMap = {
     VIEW_ADD_BAN: HandleViewBanAdd,
     VIEW_REMOVE_BAN: HandleViewBanRemove,
     VIEW_CLEAR_BANS: HandleViewClearBans,
+    VIEW_LOCK_TAB: HandleLockTab,
 };
 // ACTION TYPE (ALL OBSERVABLES END UP EMITING THIS)
 export interface Action {

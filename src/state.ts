@@ -58,12 +58,35 @@ export class HandleViewBanRemove implements Action {
 }
 
 export class HandleViewClearBans implements Action {
-    constructor(public readonly placeholder: string) {}
+    constructor() {}
 
     apply(s: State): State {
         return {
             ...s,
             bans: [],
         };
+    }
+}
+
+export class HandleLockTab implements Action {
+    constructor(
+        public readonly lockStatus: boolean,
+        public readonly tabId: number,
+    ) {}
+
+    apply(s: State): State {
+        return {
+            ...s,
+            lock: [this.lockStatus, this.tabId],
+        };
+    }
+}
+
+// Dummy action
+export class DoNothing implements Action {
+    constructor() {}
+
+    apply(s: State): State {
+        return s;
     }
 }

@@ -11,6 +11,8 @@ import {
     map,
     merge,
     fromEvent,
+    zip,
+    tap,
 } from "rxjs";
 import {
     HandleViewBanAdd,
@@ -22,6 +24,11 @@ import type { Action, ViewActionReq } from "./types.js";
 console.log("Index");
 
 // References for popup view elems ///////////////////////////////////////////
+
+const checkboxLock: HTMLInputElement = document.getElementById(
+    "checkboxLock",
+)! as HTMLInputElement;
+
 const inputAddBan: HTMLInputElement = document.getElementById(
     "inputBanSite",
 )! as HTMLInputElement;
@@ -57,7 +64,7 @@ const usrRemoveBan$: Observable<ViewActionReq> = fromEvent(
 const usrClearBan$: Observable<ViewActionReq> = fromEvent(
     clearBansBtn,
     "click",
-).pipe(map(_ => ({ action: "VIEW_CLEAR_BANS", ban: "" })));
+).pipe(map(_ => ({ action: "VIEW_CLEAR_BANS" })));
 
 // Side effect: runtime message sent, changing global browser state
 // For any user input in the popup view, send message to background, who will pipe this stream into Actions and then reduce state
