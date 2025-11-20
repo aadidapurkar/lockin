@@ -1,0 +1,18 @@
+* {
+    font-family: monospace;
+    font-size: 1rem;
+}
+
+#main {
+    width: fit-content;
+}
+#status {
+    border: 1px solid black;
+    font-weight: bold;
+    background-color: lightyellow;
+}
+
+#htmlLockText,
+#htmlLimitText {
+    text-align: center;
+}

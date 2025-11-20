@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Lockin</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <div id="main">
+            <div id="status">
+                <!-- Display Lock Status to User -->
+                <p id="htmlLockText">Current tab is</p>
+
+                <!-- Display Tab Limit to User-->
+                <p id="htmlLimitText">Current tab limit is</p>
+            </div>
+            <br />
+            <!-- Input for Changing Lock Status -->
+            <label for="">Lock Current Tab</label>
+            <input type="checkbox" id="htmlLockInp" />
+            <br />
+
+            <!-- Input for Changing Tab Limit -->
+            <br />
+            <input
+                type="number"
+                id="htmlLimitInp"
+                placeholder="Enter new tab limit"
+            />
+            <button id="btnSubmitTabLimit">Submit New Limit</button>
+            <br />
+
+            <!-- Input for Banning New Site -->
+            <br />
+            <input type="text" id="htmlNewBanInp" placeholder="Enter new ban" />
+            <button id="btnSubmitNewBan">Submit New Ban</button>
+            <br />
+
+            <!-- Input for Removing Banned Sites -->
+            <br />
+            <select id="htmlBanDropdown">
+                <option value="" disabled selected>Unban a site</option>
+            </select>
+            <button id="htmlBtnUnban">Unban</button>
+        </div>
+        <script type="module" src="main.js"></script>
+    </body>
+</html>
