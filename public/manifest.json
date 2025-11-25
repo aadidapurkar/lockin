@@ -9,13 +9,7 @@
     "background": {
         "service_worker": "service_worker.js"
     },
-    "permissions": [
-        "activeTab",
-        "scripting",
-        "storage",
-        "tabs",
-        "webNavigation"
-    ],
+    "permissions": ["activeTab", "storage", "tabs", "webNavigation"],
     "icons": {
         "128": "icon.png"
     }
