@@ -1,6 +1,11 @@
 import { from } from "rxjs";
 import { storageKeys, defaultStorage, type State } from "./types.ts";
-
+import {
+    getState,
+    initialiseState,
+    removeAllChildren,
+    stateExists,
+} from "./util.ts";
 // THIS FILE DEFINES BEHAVIOUR FOR THE POPUP PAGE
 
 // HTML elements
@@ -16,31 +21,15 @@ const inpUnbanExistingBan = document.getElementById(
 )! as HTMLInputElement;
 const btnSubmitUnban = document.getElementById("htmlBtnUnban")!;
 
-// Check that state has been initialsied previously in local storage
-// Should evaluate to false when the extension is first loaded
-const stateExists = async () => {
-    const resObj = await chrome.storage.local.get(storageKeys);
-    return storageKeys.reduce(
-        (acc: boolean, key: string) => (key in resObj ? acc : false),
-        true,
-    );
-};
-
-// Set default state values in local storage
-// Used for first time loading of extension
-const initialiseState = async () => {
-    await chrome.storage.local.set(defaultStorage);
-};
-
-const getState = async () => {
-    return (await chrome.storage.local.get(storageKeys)) as State;
-};
-// Function that runs when popup is loaded
+// FUNCTION - Function that runs when popup is loaded
+// INPUTS - None
+// OUTPUTS - None
+// SIDE EFFECTS - Updates popup HTML elements such as informative status sentences, checkboxes, dropdown options
 const refresh = async () => {
-    // First time load - check if state exists in local storage
+    // Check if state exists in local storage
     const exists = await stateExists();
 
-    // Case state doesn't exist - initialise and set state
+    // First time load - Case state doesn't exist - initialise and set state
     if (!exists) {
         initialiseState();
     }
@@ -48,21 +37,41 @@ const refresh = async () => {
     // Get state
     const state = await getState();
 
-    // Populate status text
+    // Refresh tab lock
+    const currWindowId = await (
+        await chrome.windows.getLastFocused({ populate: false })
+    ).id!;
 
-    if (state.lock) {
-        txtLock.innerText = "Current tab is locked";
+    const focusedWindow = await chrome.windows.getLastFocused({
+        populate: true,
+    });
+    const activeTab = focusedWindow.tabs?.find(tab => tab.active);
+    const activeTabId = activeTab!.id;
+
+    const tabLocked =
+        currWindowId in state.lock && state.lock[currWindowId][0] === true;
+
+    if (tabLocked) {
+        txtLock.innerText = "This tab in this window is locked";
+        inpLock.checked = true;
     } else {
-        txtLock.innerText = "Current tab is not locked";
+        txtLock.innerText = "This tab in this window is not locked";
     }
 
+    // Refresh tab limit text
     if (state.tabLimit === 999) {
         txtLimit.innerText = "Tab limit is unlimited";
     } else {
         txtLimit.innerText = `Tab limit is ${state.tabLimit}`;
     }
 
-    // Fill dropdowns
+    // Refresh bans (select options in dropdown)
+    removeAllChildren(inpUnbanExistingBan);
+    const placeholderOption = document.createElement("option");
+    placeholderOption.selected = true;
+    placeholderOption.disabled = true;
+    placeholderOption.text = "Select a site to unban";
+    inpUnbanExistingBan.appendChild(placeholderOption);
     state.bannedSites.map(site => {
         const option = document.createElement("option");
         option.text = site;
@@ -72,14 +81,37 @@ const refresh = async () => {
     });
 };
 
+// EVENT LISTENER
+// When lock checkbox is changed, update local storage keys lock (which is an object mapping window IDs to [boolean, tabID])
+// Semantic change - The tab in this window is locked/unlocked
 inpLock.addEventListener("change", async () => {
-    await chrome.storage.local.set({ lock: inpLock.checked });
+    const state = await getState();
+
+    const currWindowId = await (
+        await chrome.windows.getLastFocused({ populate: false })
+    ).id!;
+
+    const focusedWindow = await chrome.windows.getLastFocused({
+        populate: true,
+    });
+    const activeTab = focusedWindow.tabs?.find(tab => tab.active);
+    const activeTabId = activeTab!.id;
+
+    await chrome.storage.local.set({
+        lock: { ...state.lock, [currWindowId]: [inpLock.checked, activeTabId] },
+    });
 });
 
+// EVENT LISTENER
+// When new tab limit is submitted, update local storage key tabLimit
+// Semantic change - When n+1th tab is opened, close it
 btnSubmitNewLimit.addEventListener("click", async () => {
     await chrome.storage.local.set({ tabLimit: inpLimit.value });
 });
 
+// EVENT LISTENER
+// When new ban is submitted, update local storage key bannedSites
+// Semantic change - When user navigates to banned site, close tab
 btnSubmitNewBan.addEventListener("click", async () => {
     const state = await getState();
 
@@ -88,6 +120,9 @@ btnSubmitNewBan.addEventListener("click", async () => {
     });
 });
 
+// EVENT LISTENER
+// When unban is submitted, update local storage key bannedSites
+// Semantic change - When user navigates to unbanned site, allow tab to stay open
 btnSubmitUnban.addEventListener("click", async () => {
     const state = await getState();
 
@@ -98,8 +133,11 @@ btnSubmitUnban.addEventListener("click", async () => {
     });
 });
 
-chrome.storage.onChanged.addListener((changes, namespace) => {
+// EVENT LISTENER
+// When local storage is changed, refresh popup to reflect changes (e.g unban a site --> semantic effect of the site no longer being an option in the dropdown)
+chrome.storage.onChanged.addListener((_, __) => {
     refresh();
 });
 
+// Initial call of refresh - for when popup is opened
 refresh();
