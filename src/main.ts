@@ -2,6 +2,8 @@ import { from } from "rxjs";
 import { storageKeys, defaultStorage, type State } from "./types.ts";
 import {
     getState,
+    getTabCount,
+    getTabs,
     initialiseState,
     removeAllChildren,
     stateExists,
@@ -107,6 +109,16 @@ inpLock.addEventListener("change", async () => {
 // Semantic change - When n+1th tab is opened, close it
 btnSubmitNewLimit.addEventListener("click", async () => {
     await chrome.storage.local.set({ tabLimit: inpLimit.value });
+
+    // Remove excess tabs
+    const state = await getState();
+
+    const tabCount = await getTabCount();
+    if (tabCount > state.tabLimit) {
+        const tabs = await getTabs();
+        const tabsToClose = tabs.slice(state.tabLimit, tabs.length);
+        chrome.tabs.remove(tabsToClose.map(tab => tab.id!));
+    }
 });
 
 // EVENT LISTENER
