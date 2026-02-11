@@ -27,6 +27,15 @@ export const getTabs = async () => {
     return tabs;
 };
 
+// FUNCTION - Get the currently focused tab
+// INPUTS - None
+// OUTPUTS - Single Tab object (or undefined)
+// SIDE EFFECTS - None
+export const getCurrentTab = async () => {
+    const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+    return tab;
+};
+
 // FUNCTION - Get current tab count
 // INPUTS - None
 // OUTPUTS - Number of tabs

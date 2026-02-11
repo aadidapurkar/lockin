@@ -2,6 +2,7 @@ import { from } from "rxjs";
 import { storageKeys, defaultStorage, type State } from "./types.ts";
 import {
     delay,
+    getCurrentTab,
     getState,
     getTabCount,
     getTabs,
@@ -39,7 +40,7 @@ chrome.tabs.onCreated.addListener(async info => {
         await chrome.storage.local.set(defaultStorage);
     }
     const extnOrigin = `chrome-extension://${chrome.runtime.id}`;
-    enforceLock(tabData, info, state, extnOrigin)
+    enforceLock(info.id!, tabData, info, state, extnOrigin);
 });
 
 // EVENT LISTENER - Enforce site bans
@@ -51,6 +52,17 @@ chrome.webNavigation.onBeforeNavigate.addListener(async details => {
             chrome.tabs.remove(details.tabId);
         }
     });
+});
+
+// EVENT LISTENER - Enforce tab lock "Early Bird" listener
+chrome.tabs.onHighlighted.addListener(async info => {
+    const state = await getState();
+    const extnOrigin = `chrome-extension://${chrome.runtime.id}`;
+
+    // onHighlighted gives an array of IDs (for multi-select), we check the first
+    const highlightedTabId = info.tabIds[0];
+    const tabData = await chrome.tabs.get(highlightedTabId);
+    enforceLock(highlightedTabId, tabData, info, state, extnOrigin);
 });
 
 // EVENT LISTENER - Enforce tab lock
@@ -68,23 +80,33 @@ chrome.tabs.onActivated.addListener(async info => {
     // if any of the conditions fail then the tab lock integrity is fine and we dont need to do whats in the innermost condition (switch back)
 
     const extnOrigin = `chrome-extension://${chrome.runtime.id}`;
-    enforceLock(tabData, info, state, extnOrigin)
+    enforceLock(info.tabId, tabData, info, state, extnOrigin);
 });
 
-
-const enforceLock = async (tabData : chrome.tabs.Tab, info : chrome.tabs.OnActivatedInfo | chrome.tabs.Tab, state : State, extnOrigin : string) => {
+const enforceLock = async (
+    currentTabId: number,
+    tabData: chrome.tabs.Tab,
+    info:
+        | chrome.tabs.OnActivatedInfo
+        | chrome.tabs.Tab
+        | chrome.tabs.OnHighlightedInfo,
+    state: State,
+    extnOrigin: string,
+) => {
     // Condition 0 - The URL does not belong to the extension itself (need to whitelist extn so user can turn tab lock off)
     if (tabData.url && !tabData.url.startsWith(extnOrigin)) {
-        const currentTabId = 'tabId' in info ? info.tabId : info.id;
+        //const currentTabId = 'tabId' in info ? info.tabId : info.id;
         // Condition 1 - There has been a lock previously set for this window and is currently set
-        if (info.windowId in state.lock && state.lock[info.windowId][0] === true) {
+        if (
+            info.windowId in state.lock &&
+            state.lock[info.windowId][0] === true
+        ) {
             console.log("Condition 1 met");
 
             // Condition 2 - The activated tab is not the locked tab, and the window is locked
             if (currentTabId !== state.lock[info.windowId][1]) {
                 console.log("Condition 2 met");
                 const lockedTabId = state.lock[info.windowId][1];
-                
 
                 // DETECTED that the current tab is naughty
                 // Retry switching back sequentially up to 10 times
@@ -108,4 +130,31 @@ const enforceLock = async (tabData : chrome.tabs.Tab, info : chrome.tabs.OnActiv
             }
         }
     }
-}
+};
+
+// 
+const enforceLockPoll = async () => {
+    const state = await getState();
+
+    const exists = await stateExists();
+    if (!exists) {
+        await chrome.storage.local.set(defaultStorage);
+    }
+    const extnOrigin = `chrome-extension://${chrome.runtime.id}`;
+    const tab = await getCurrentTab();
+    if (!tab) {
+        console.log("No tab in focus (Are you looking at DevTools?)");
+        return;
+    }
+    enforceLock(tab.id!, tab, tab, state, extnOrigin);
+};
+
+
+
+// EVENT LISTENER / POLLER - Enforce tab lock every 1500ms 
+// Why? - There is a fatal flaw in the Chrome Extension API that allows the user to cheat their way into unlocking a tab
+// By hogging the input and holding down mouse1 on another tab to beat the tab lock.
+// Tab state cannot be changed by the service worker during this time because the Chrome API rejects it for the reason 'user is dragging a tab'
+// The best fix I can think of is to poll every 1500ms (maybe less often would be ideal for cases of laptops who dont want excessive power usage)
+// The poll effectively handles the case where the user has used the cheat
+setInterval(enforceLockPoll, 1500);

@@ -1,9 +1,12 @@
 # Lockin
 
-### Prereqs
-
--   node, chromium browser
--   `npm i`
+### Prereqs (Running Live)
+-   have a chromium based browser
+- then, [download from webstore](https://chromewebstore.google.com/detail/lockin/ekclemfcpeipfokbhiebmppdpecmapeh)
+### Prereqs (Running Locally)
+-   have [npm/node.js installed](https://nodejs.org/en/download)
+-   have a chromium based browser
+-   finally, clone repo and run `npm i` inside the main folder, `lockin`
 
 ### Code Structure
 
@@ -14,4 +17,4 @@
 
 ### Build
 
-`npm run ai2` - compiles extn in to vanilla html/css/js which can be loaded in chrome
+`npm run ai3` - compiles extn in to vanilla html/css/js to `dist` folder which can be loaded in chrome
