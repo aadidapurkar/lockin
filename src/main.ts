@@ -11,6 +11,7 @@ import {
 // THIS FILE DEFINES BEHAVIOUR FOR THE POPUP PAGE
 
 // HTML elements
+const statusDiv = document.getElementById("status")!;
 const txtLock = document.getElementById("htmlLockText")!;
 const txtLimit = document.getElementById("htmlLimitText")!;
 const inpLock = document.getElementById("htmlLockInp")! as HTMLInputElement;
@@ -56,8 +57,10 @@ const refresh = async () => {
     if (tabLocked) {
         txtLock.innerText = "This tab in this window is locked";
         inpLock.checked = true;
+        statusDiv.style.backgroundColor = "#ff8826"
     } else {
         txtLock.innerText = "This tab in this window is not locked";
+         statusDiv.style.backgroundColor = "#90ee90"
     }
 
     // Refresh tab limit text
@@ -72,7 +75,7 @@ const refresh = async () => {
     const placeholderOption = document.createElement("option");
     placeholderOption.selected = true;
     placeholderOption.disabled = true;
-    placeholderOption.text = "Select a site to unban";
+    placeholderOption.text = "Select";//"Select a site to unban";
     inpUnbanExistingBan.appendChild(placeholderOption);
     state.bannedSites.map(site => {
         const option = document.createElement("option");

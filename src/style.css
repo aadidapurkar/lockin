@@ -1,18 +1,65 @@
 * {
     font-family: monospace;
     font-size: 1rem;
+    box-sizing: border-box
 }
 
 #main {
-    width: fit-content;
+    width: 220px;
 }
+
 #status {
     border: 1px solid black;
     font-weight: bold;
-    background-color: lightyellow;
+    background-color: #90ee90;
 }
 
 #htmlLockText,
 #htmlLimitText {
     text-align: center;
 }
+
+#lockDiv,
+#limitDiv,
+#banDiv {
+    border: 1px solid black;
+    margin-bottom: 8px;
+    padding: 0.5rem;
+}
+
+#limitDiv,
+#banDiv,
+#lockDiv {
+    display: flex;
+}
+
+#limitDiv {
+    flex-direction: row;
+}
+
+#banDiv {
+    flex-direction: column;
+}
+
+#bd1, #bd2 {
+    display: flex;
+    flex-direction: row;
+    width: fit-content;
+}
+
+#bd2 {
+    margin-top: 0.5rem;
+}
+
+input[type="text"], 
+input[type="number"], 
+select {
+    flex-grow: 1;    /* Take up available space */
+    min-width: 0;    /* Prevents the input from forcing its default width */
+    width: 100%;     /* Helps with consistency */
+}
+
+button {
+    margin-left: 4px;
+}
+

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
@@ -16,34 +16,49 @@
                 <p id="htmlLimitText">Current tab limit is</p>
             </div>
             <br />
+
             <!-- Input for Changing Lock Status -->
-            <label for="">Lock Current Tab</label>
-            <input type="checkbox" id="htmlLockInp" />
-            <br />
+            <div id="lockDiv">
+                <label for="">Lock Current Tab</label>
+                <input type="checkbox" id="htmlLockInp" />
+                <br />
+            </div>
 
-            <!-- Input for Changing Tab Limit -->
-            <br />
-            <input
-                type="number"
-                min="1"
-                id="htmlLimitInp"
-                placeholder="Enter new tab limit"
-            />
-            <button id="btnSubmitTabLimit">Submit New Limit</button>
-            <br />
+            <div id="limitDiv">
+                <!-- Input for Changing Tab Limit -->
+                <br />
+                <input
+                    type="number"
+                    min="1"
+                    id="htmlLimitInp"
+                    placeholder="Tab Limit..."
+                />
+                <button id="btnSubmitTabLimit">Submit</button>
+                <br />
+            </div>
 
-            <!-- Input for Banning New Site -->
-            <br />
-            <input type="text" id="htmlNewBanInp" placeholder="Enter new ban" />
-            <button id="btnSubmitNewBan">Submit New Ban</button>
-            <br />
+            <div id="banDiv">
+                <div id="bd1">
+                    <!-- Input for Banning New Site -->
+                    <br />
+                    <input
+                        type="text"
+                        id="htmlNewBanInp"
+                        placeholder="New Ban..."
+                    />
+                    <button id="btnSubmitNewBan">Submit</button>
+                    <br />
+                </div>
 
-            <!-- Input for Removing Banned Sites -->
-            <br />
-            <select id="htmlBanDropdown">
-                <option value="" disabled selected>Unban a site</option>
-            </select>
-            <button id="htmlBtnUnban">Unban</button>
+                <!-- Input for Removing Banned Sites -->
+                <div id="bd2">
+                    <br />
+                    <select id="htmlBanDropdown">
+                        <option value="" disabled selected>Unban a site</option>
+                    </select>
+                    <button id="htmlBtnUnban">Unban</button>
+                </div>
+            </div>
         </div>
         <script type="module" src="main.js"></script>
     </body>
