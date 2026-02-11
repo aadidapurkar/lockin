@@ -17,6 +17,13 @@ const handleInitial = async () => {
     if (!exists) {
         initialiseState();
     }
+
+    // If state exists, validate and fix tabLimit if invalid
+    const state = await getState();
+    if (state.tabLimit < 1) {
+        await chrome.storage.local.set({ tabLimit: defaultStorage.tabLimit });
+        console.log("Invalid tabLimit detected and reset to default.");
+    }
 };
 handleInitial();
 
@@ -157,4 +164,5 @@ const enforceLockPoll = async () => {
 // Tab state cannot be changed by the service worker during this time because the Chrome API rejects it for the reason 'user is dragging a tab'
 // The best fix I can think of is to poll every 1500ms (maybe less often would be ideal for cases of laptops who dont want excessive power usage)
 // The poll effectively handles the case where the user has used the cheat
+// It also seems to handle the case where the user drag opens a bookmark in a new tab to defeat the tab lock
 setInterval(enforceLockPoll, 1500);

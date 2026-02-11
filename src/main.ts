@@ -108,8 +108,15 @@ inpLock.addEventListener("change", async () => {
 // When new tab limit is submitted, update local storage key tabLimit
 // Semantic change - When n+1th tab is opened, close it
 btnSubmitNewLimit.addEventListener("click", async () => {
-    await chrome.storage.local.set({ tabLimit: inpLimit.value });
+    // prevent user from bricking their browser by checking tab limit provided >= 1
+    // before this check, if a user entered a tab limit like 0, they would have had to delete and relogin chrome profile or delete local extn code files
+    if (inpLimit.valueAsNumber >= 1 && inpLimit.checkValidity()) {
+        await chrome.storage.local.set({ tabLimit: inpLimit.value });
 
+    } else {
+        alert("You set an invalid tab limit and this was not put through.")
+        return
+    }
     // Remove excess tabs
     const state = await getState();
 
