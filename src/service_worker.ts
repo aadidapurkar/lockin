@@ -1,7 +1,7 @@
-import { from } from "rxjs";
 import { storageKeys, defaultStorage, type State } from "./types.ts";
 import {
     delay,
+    extnOrigin,
     getCurrentTab,
     getState,
     getTabCount,
@@ -25,7 +25,7 @@ const handleInitial = async () => {
         console.log("Invalid tabLimit detected and reset to default.");
     }
 };
-handleInitial();
+handleInitial().catch(console.error);;
 
 // EVENT LISTENER - Enforce tab limit
 chrome.tabs.onCreated.addListener(async info => {
@@ -46,7 +46,6 @@ chrome.tabs.onCreated.addListener(async info => {
     if (!exists) {
         await chrome.storage.local.set(defaultStorage);
     }
-    const extnOrigin = `chrome-extension://${chrome.runtime.id}`;
     enforceLock(info.id!, tabData, info, state, extnOrigin);
 });
 
@@ -64,7 +63,6 @@ chrome.webNavigation.onBeforeNavigate.addListener(async details => {
 // EVENT LISTENER - Enforce tab lock "Early Bird" listener
 chrome.tabs.onHighlighted.addListener(async info => {
     const state = await getState();
-    const extnOrigin = `chrome-extension://${chrome.runtime.id}`;
 
     // onHighlighted gives an array of IDs (for multi-select), we check the first
     const highlightedTabId = info.tabIds[0];
@@ -86,7 +84,6 @@ chrome.tabs.onActivated.addListener(async info => {
     // each of the below condition tries to validate that the tab just activated/created is a 'naughty' tab
     // if any of the conditions fail then the tab lock integrity is fine and we dont need to do whats in the innermost condition (switch back)
 
-    const extnOrigin = `chrome-extension://${chrome.runtime.id}`;
     enforceLock(info.tabId, tabData, info, state, extnOrigin);
 });
 
@@ -147,7 +144,6 @@ const enforceLockPoll = async () => {
     if (!exists) {
         await chrome.storage.local.set(defaultStorage);
     }
-    const extnOrigin = `chrome-extension://${chrome.runtime.id}`;
     const tab = await getCurrentTab();
     if (!tab) {
         console.log("No tab in focus (Are you looking at DevTools?)");
@@ -159,6 +155,7 @@ const enforceLockPoll = async () => {
 
 
 // EVENT LISTENER / POLLER - Enforce tab lock every 1500ms 
+// NOTE - Try and optimise this to increase efficiency and reduce battery drain potential
 // Why? - There is a fatal flaw in the Chrome Extension API that allows the user to cheat their way into unlocking a tab
 // By hogging the input and holding down mouse1 on another tab to beat the tab lock.
 // Tab state cannot be changed by the service worker during this time because the Chrome API rejects it for the reason 'user is dragging a tab'

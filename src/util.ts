@@ -72,3 +72,6 @@ export const delay = (ms: number) => {
 export const initialiseState: () => Promise<void> = async () => {
     await chrome.storage.local.set(defaultStorage);
 };
+
+
+export const extnOrigin = `chrome-extension://${chrome.runtime.id}`;

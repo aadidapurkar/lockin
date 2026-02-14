@@ -1,4 +1,3 @@
-import { from } from "rxjs";
 import { storageKeys, defaultStorage, type State } from "./types.ts";
 import {
     getState,
