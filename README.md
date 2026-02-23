@@ -6,7 +6,7 @@
 ### Prereqs (Running Locally)
 -   have [npm/node.js installed](https://nodejs.org/en/download)
 -   have a chromium based browser
--   clone repo &rarr run `npm i` &rarr `npm run ai3` &rarr load `dist` folder as unpacked extn in browser
+-   clone repo &rarr; `npm i` &rarr; `npm run ai3` &rarr; load `dist` folder as unpacked extn in browser
 
 ### Code Structure
 
