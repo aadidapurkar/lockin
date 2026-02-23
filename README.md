@@ -10,10 +10,10 @@
 
 ### Code Structure
 
--   `types.ts` - state definitions and constats
+-   `types.ts` - state definitions and constants
 -   `main.ts` - behaviour for popup page of extn
 -   `util.ts` - util functions, mostly interacting with chrome apis
--   `service_worker.ts` - behaviour for background of extn (enforcing restrictions)
+-   `service_worker.ts` - behaviour for background script of extn (enforcing restrictions)
 
 ### Build
 
