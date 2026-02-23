@@ -1,4 +1,4 @@
-# Lockin
+# [Lockin](https://chromewebstore.google.com/detail/lockin/ekclemfcpeipfokbhiebmppdpecmapeh)
 
 ### Prereqs (Running Live)
 -   have a chromium based browser
@@ -6,7 +6,7 @@
 ### Prereqs (Running Locally)
 -   have [npm/node.js installed](https://nodejs.org/en/download)
 -   have a chromium based browser
--   finally, clone repo and run `npm i` inside the main folder, `lockin`
+-   clone repo &rarr run `npm i` &rarr `npm run ai3` &rarr load `dist` folder as unpacked extn in browser
 
 ### Code Structure
 
