@@ -1,5 +1,5 @@
-Minimise polling to a smaller window of time / come up with a more efficient solution
-In popup.html, group related actions with div borders / cards
-Consider font change
-consider colour coded bg - orange if locked - greeen if unlocked
-put submit buttons on same line to make ui less overstimulating
+Active Todos
+Optimise popup ux with enter submissions (get current selected input element to )
+
+Long Term Todos
+Minimise polling to a smaller window of time / come up with a more efficient solution (e.g mousedown listen)

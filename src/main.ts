@@ -162,3 +162,7 @@ chrome.storage.onChanged.addListener((_, __) => {
 
 // Initial call of refresh - for when popup is opened
 refresh();
+
+
+
+// UX Optimisations - when enter is keyed, get the active input html element and submit
