@@ -1,4 +1,4 @@
-# Lockin
+# [Lockin](https://chromewebstore.google.com/detail/lockin/ekclemfcpeipfokbhiebmppdpecmapeh)
 
 ### Prereqs (Running Live)
 -   have a chromium based browser
@@ -6,14 +6,14 @@
 ### Prereqs (Running Locally)
 -   have [npm/node.js installed](https://nodejs.org/en/download)
 -   have a chromium based browser
--   finally, clone repo and run `npm i` inside the main folder, `lockin`
+-   clone repo &rarr; `npm i` &rarr; `npm run ai3` &rarr; load `dist` folder as unpacked extn in browser
 
 ### Code Structure
 
--   `types.ts` - state definitions and constats
+-   `types.ts` - state definitions and constants
 -   `main.ts` - behaviour for popup page of extn
 -   `util.ts` - util functions, mostly interacting with chrome apis
--   `service_worker.ts` - behaviour for background of extn (enforcing restrictions)
+-   `service_worker.ts` - behaviour for background script of extn (enforcing restrictions)
 
 ### Build
 
