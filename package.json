@@ -7,9 +7,7 @@
         "dev": "vite",
         "build": "tsc && vite build",
         "preview": "vite preview",
-        "aiscript": "rm -rf dist && mkdir -p dist && cp -R public/* dist/ && npx esbuild src/service_worker.ts --bundle --platform=browser --outfile=dist/service_worker.js && npx esbuild src/main.ts --bundle --platform=browser --outfile=dist/main.js",
-        "ai2": "rm -rf dist && mkdir -p dist && cp -R public/* dist/ && cp src/style.css dist/ && cp src/types.ts dist/ && npx esbuild src/service_worker.ts --bundle --platform=browser --outfile=dist/service_worker.js && npx esbuild src/main.ts --bundle --platform=browser --outfile=dist/main.js",
-        "ai3": "npx shx rm -rf dist && npx shx mkdir -p dist && npx shx cp -r public/* dist/ && npx shx cp src/style.css dist/ && npx esbuild src/service_worker.ts --bundle --platform=browser --outfile=dist/service_worker.js && npx esbuild src/main.ts --bundle --platform=browser --outfile=dist/main.js"
+        "local-build": "npx shx rm -rf dist && npx shx mkdir -p dist && npx shx cp -r public/* dist/ && npx shx cp src/style.css dist/ && npx esbuild src/service_worker.ts --bundle --platform=browser --outfile=dist/service_worker.js && npx esbuild src/main.ts --bundle --platform=browser --outfile=dist/main.js"
     },
     "devDependencies": {
         "@types/chrome": "^0.1.31",
