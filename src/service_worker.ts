@@ -168,7 +168,7 @@ setInterval(enforceLockPoll, 1500);
 // Bug fix (https://github.com/aadidapurkar/lockin/issues/1)
 chrome.tabs.onRemoved.addListener(
   async (tabId : number, removeInfo : any) => {
-        console.log(`DEBUG EVENT`)
+        //console.log(`DEBUG EVENT`)
         // The way i've stored the lock state is not compatible to hand this bug efficiently
         // Would need a refactor for how the lock state is stored
         const localStorageLockState = (await getState()).lock // note that this is potentially mutated inside the for loop 
@@ -176,11 +176,11 @@ chrome.tabs.onRemoved.addListener(
         const removedWindowId : number = removeInfo.windowId 
 
         for (const [windowId, [lockState, lockedTabId]] of Object.entries(localStorageLockState)) {
-            console.log(`\t DEBUG windowId${windowId} lockState${lockState} lockedTabId${lockedTabId}`)
+            //console.log(`\t DEBUG windowId${windowId} lockState${lockState} lockedTabId${lockedTabId}`)
             if (Number(windowId) == removedWindowId) {
                 if (lockedTabId == tabId) {
                     // Detected that the locked tab was closed
-                    console.log(`DEBUG detected locked tab was closed, need to update local storage and refresh ui`)
+                    //console.log(`DEBUG detected locked tab was closed, need to update local storage and refresh ui`)
                     // can this happen while the popup happens? if so need to somehow refresh() popup again in main.ts
                     localStorageLockState[Number(windowId)] = [false, -1]
                     await chrome.storage.local.set({lock: localStorageLockState})
@@ -190,3 +190,38 @@ chrome.tabs.onRemoved.addListener(
         }
   }
 )
+
+// Feat (ref issue 3 - Toggle tab lock shortcut Alt+Shift+L)
+chrome.commands.onCommand.addListener(async (command) => {
+  if(command === "lock-tab") {
+        console.log(`DEBUG lock tab shortcut`)
+        const state = await getState();
+    
+        const currWindowId = await (
+            await chrome.windows.getLastFocused({ populate: false })
+        ).id!;
+    
+        const focusedWindow = await chrome.windows.getLastFocused({
+            populate: true,
+        });
+        const activeTab = focusedWindow.tabs?.find(tab => tab.active);
+        const activeTabId = activeTab!.id;
+    
+        // case tab currently locked
+        if (!state.lock[currWindowId] || state.lock[currWindowId][0] == false) {
+            console.log(`DEBUG case lock -> unlock`)
+            await chrome.action.setIcon({path: "./icon-lock.png"})
+            await chrome.storage.local.set({
+                lock: { ...state.lock, [currWindowId]: [true, activeTabId] },
+            });
+        // case tab currently unlocked
+        } else {
+            console.log(`DEBUG case unlock -> lock`)
+            await chrome.action.setIcon({path: "./icon.png"})
+            await chrome.storage.local.set({
+                lock: { ...state.lock, [currWindowId]: [false, activeTabId] },
+            });
+        }
+
+  }
+});

@@ -19,3 +19,5 @@
 -   `util.ts` - util functions, mostly interacting with chrome apis
 -   `service_worker.ts` - behaviour for background script of extn (enforcing restrictions)
 
+### Notes
+-   if modifying extn code locally, you may need to manually remove/re-add the extn, as opposed to merely clicking refresh btn, as clicking the refresh btn does not clear local storage
