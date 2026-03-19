@@ -22,7 +22,7 @@ const handleInitial = async () => {
     const state = await getState();
     if (state.tabLimit < 1) {
         await chrome.storage.local.set({ tabLimit: defaultStorage.tabLimit });
-        console.log("Invalid tabLimit detected and reset to default.");
+        //console.log("Invalid tabLimit detected and reset to default.");
     }
 };
 handleInitial().catch(console.error);;
@@ -72,7 +72,7 @@ chrome.tabs.onHighlighted.addListener(async info => {
 
 // EVENT LISTENER - Enforce tab lock
 chrome.tabs.onActivated.addListener(async info => {
-    console.log("Tab activation detected");
+    //console.log("Tab activation detected");
 
     const tabData = await chrome.tabs.get(info.tabId);
     const state = await getState();
@@ -105,11 +105,11 @@ const enforceLock = async (
             info.windowId in state.lock &&
             state.lock[info.windowId][0] === true
         ) {
-            console.log("Condition 1 met");
+            //console.log("Condition 1 met");
 
             // Condition 2 - The activated tab is not the locked tab, and the window is locked
             if (currentTabId !== state.lock[info.windowId][1]) {
-                console.log("Condition 2 met");
+                //console.log("Condition 2 met");
                 const lockedTabId = state.lock[info.windowId][1];
 
                 // DETECTED that the current tab is naughty
@@ -127,7 +127,7 @@ const enforceLock = async (
                         await chrome.tabs.update(lockedTabId, { active: true });
                         break; // Success; exit the loop
                     } catch (error) {
-                        console.log("Error switching to locked tab:", error);
+                        //console.log("Error switching to locked tab:", error);
                         await delay(50); // Wait before next attempt
                     }
                 }
@@ -146,7 +146,7 @@ const enforceLockPoll = async () => {
     }
     const tab = await getCurrentTab();
     if (!tab) {
-        console.log("No tab in focus (Are you looking at DevTools?)");
+        //console.log("No tab in focus (Are you looking at DevTools?)");
         return;
     }
     enforceLock(tab.id!, tab, tab, state, extnOrigin);
@@ -163,3 +163,30 @@ const enforceLockPoll = async () => {
 // The poll effectively handles the case where the user has used the cheat
 // It also seems to handle the case where the user drag opens a bookmark in a new tab to defeat the tab lock
 setInterval(enforceLockPoll, 1500);
+
+
+// Bug fix (https://github.com/aadidapurkar/lockin/issues/1)
+chrome.tabs.onRemoved.addListener(
+  async (tabId : number, removeInfo : any) => {
+        console.log(`DEBUG EVENT`)
+        // The way i've stored the lock state is not compatible to hand this bug efficiently
+        // Would need a refactor for how the lock state is stored
+        const localStorageLockState = (await getState()).lock // note that this is potentially mutated inside the for loop 
+
+        const removedWindowId : number = removeInfo.windowId 
+
+        for (const [windowId, [lockState, lockedTabId]] of Object.entries(localStorageLockState)) {
+            console.log(`\t DEBUG windowId${windowId} lockState${lockState} lockedTabId${lockedTabId}`)
+            if (Number(windowId) == removedWindowId) {
+                if (lockedTabId == tabId) {
+                    // Detected that the locked tab was closed
+                    console.log(`DEBUG detected locked tab was closed, need to update local storage and refresh ui`)
+                    // can this happen while the popup happens? if so need to somehow refresh() popup again in main.ts
+                    localStorageLockState[Number(windowId)] = [false, -1]
+                    await chrome.storage.local.set({lock: localStorageLockState})
+                    await chrome.action.setIcon({path: "./icon.png"})
+                }   
+            }
+        }
+  }
+)

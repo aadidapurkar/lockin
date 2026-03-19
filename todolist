@@ -1,13 +1,8 @@
 Active Todos
-
-    UI/Extn Popup False Lock Display - 
-        - cause: lock a tab --> close the locked tab --> on subsequent popup opens, the ui still shows locked state,
-        functionality: app still works okay but this bug can definitely confuse user and not ideal
-
-    Optimise popup ux with enter submissions (get current selected input element to )
-
     Tab limit off by 1 error on microsoft edge
 
 Long Term Todos
+
+    Fix typing 
 
     Minimise polling to a smaller window of time / come up with a more efficient solution (e.g mousedown listen)
