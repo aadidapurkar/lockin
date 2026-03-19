@@ -1,5 +1,4 @@
 Active Todos
-    Change Extension Icon when Lock State Changes
 
     UI/Extn Popup False Lock Display - 
         - cause: lock a tab --> close the locked tab --> on subsequent popup opens, the ui still shows locked state,
@@ -8,7 +7,7 @@ Active Todos
     Optimise popup ux with enter submissions (get current selected input element to )
 
     Tab limit off by 1 error on microsoft edge
-    
+
 Long Term Todos
 
     Minimise polling to a smaller window of time / come up with a more efficient solution (e.g mousedown listen)

@@ -101,6 +101,11 @@ inpLock.addEventListener("change", async () => {
     const activeTab = focusedWindow.tabs?.find(tab => tab.active);
     const activeTabId = activeTab!.id;
 
+    if (inpLock.checked) {
+        await chrome.action.setIcon({path: "./icon-lock.png"})
+    } else {
+        await chrome.action.setIcon({path: "./icon.png"})
+    }
     await chrome.storage.local.set({
         lock: { ...state.lock, [currWindowId]: [inpLock.checked, activeTabId] },
     });
