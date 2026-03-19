@@ -1,6 +1,7 @@
 import { storageKeys, defaultStorage, type State } from "./types.ts";
 import {
     delay,
+    enforceTabLimit,
     extnOrigin,
     getCurrentTab,
     getState,
@@ -31,14 +32,7 @@ handleInitial().catch(console.error);;
 chrome.tabs.onCreated.addListener(async info => {
     const state = await getState();
 
-    const tabCount = await getTabCount();
-
-    if (tabCount >= state.tabLimit) {
-        const tabs = await getTabs();
-        const tabsToClose = tabs.slice(state.tabLimit, tabs.length);
-
-        chrome.tabs.remove(tabsToClose.map(tab => tab.id!));
-    }
+    enforceTabLimit()
 
     const tabData = await chrome.tabs.get(info.id!);
     const state2 = await getState();

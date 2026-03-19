@@ -75,3 +75,25 @@ export const initialiseState: () => Promise<void> = async () => {
 
 
 export const extnOrigin = `chrome-extension://${chrome.runtime.id}`;
+
+
+// FUNCTION - Enforces tab limit
+// INPUTS - None
+// OUTPUTS - None
+// SIDE EFFECTS - Removes tabs
+export const enforceTabLimit = async () => {
+    const state = await getState();
+    const tabs = await getTabs(); // Get all actual visible tabs
+    
+    if (tabs.length > state.tabLimit) {
+        // Find how many tabs we need to close
+        const excessCount = tabs.length - state.tabLimit;
+        
+        // Sorting by ID's
+        const tabsToClose = tabs
+            .sort((tabA, tabB) => (tabB.id || 0) - (tabA.id || 0))  // specify compare fn
+            .slice(0, excessCount);
+
+        chrome.tabs.remove(tabsToClose.map(tab => tab.id!));
+    }
+};

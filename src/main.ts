@@ -1,5 +1,6 @@
 import { storageKeys, defaultStorage, type State } from "./types.ts";
 import {
+    enforceTabLimit,
     getState,
     getTabCount,
     getTabs,
@@ -125,14 +126,7 @@ btnSubmitNewLimit.addEventListener("click", async () => {
         return
     }
     // Remove excess tabs
-    const state = await getState();
-
-    const tabCount = await getTabCount();
-    if (tabCount > state.tabLimit) {
-        const tabs = await getTabs();
-        const tabsToClose = tabs.slice(state.tabLimit, tabs.length);
-        chrome.tabs.remove(tabsToClose.map(tab => tab.id!));
-    }
+    enforceTabLimit()
 });
 
 // EVENT LISTENER
