@@ -14,5 +14,5 @@ export const defaultStorage = {
 export type State = {
     lock: { [key: number]: [boolean, number] }; // An object mapping window IDs to a tuple (first element: whether window is locked, second element: tab ID)
     tabLimit: number; // Maximum number of tabs allowed
-    bannedSites: [string]; // An array of banned site URLs / substrings
+    bannedSites: string[]; // An array of banned site URLs / substrings
 };

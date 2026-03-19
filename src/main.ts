@@ -119,7 +119,7 @@ btnSubmitNewLimit.addEventListener("click", async () => {
     // prevent user from bricking their browser by checking tab limit provided >= 1
     // before this check, if a user entered a tab limit like 0, they would have had to delete and relogin chrome profile or delete local extn code files
     if (inpLimit.valueAsNumber >= 1 && inpLimit.checkValidity()) {
-        await chrome.storage.local.set({ tabLimit: inpLimit.value });
+        await chrome.storage.local.set({ tabLimit: inpLimit.valueAsNumber });
 
     } else {
         alert("You set an invalid tab limit and this was not put through.")

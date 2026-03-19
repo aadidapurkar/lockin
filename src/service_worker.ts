@@ -26,7 +26,7 @@ const handleInitial = async () => {
         //console.log("Invalid tabLimit detected and reset to default.");
     }
 };
-handleInitial().catch(console.error);;
+handleInitial().catch(console.error);
 
 // EVENT LISTENER - Enforce tab limit
 chrome.tabs.onCreated.addListener(async info => {
@@ -47,22 +47,13 @@ chrome.tabs.onCreated.addListener(async info => {
 chrome.webNavigation.onBeforeNavigate.addListener(async details => {
     const state = await getState();
 
-    state.bannedSites.map(site => {
+    state.bannedSites.forEach(site => {
         if (details.url.includes(site)) {
             chrome.tabs.remove(details.tabId);
         }
     });
 });
 
-// EVENT LISTENER - Enforce tab lock "Early Bird" listener
-chrome.tabs.onHighlighted.addListener(async info => {
-    const state = await getState();
-
-    // onHighlighted gives an array of IDs (for multi-select), we check the first
-    const highlightedTabId = info.tabIds[0];
-    const tabData = await chrome.tabs.get(highlightedTabId);
-    enforceLock(highlightedTabId, tabData, info, state, extnOrigin);
-});
 
 // EVENT LISTENER - Enforce tab lock
 chrome.tabs.onActivated.addListener(async info => {
@@ -75,8 +66,7 @@ chrome.tabs.onActivated.addListener(async info => {
     if (!exists) {
         await chrome.storage.local.set(defaultStorage);
     }
-    // each of the below condition tries to validate that the tab just activated/created is a 'naughty' tab
-    // if any of the conditions fail then the tab lock integrity is fine and we dont need to do whats in the innermost condition (switch back)
+
 
     enforceLock(info.tabId, tabData, info, state, extnOrigin);
 });
@@ -130,7 +120,7 @@ const enforceLock = async (
     }
 };
 
-// 
+
 const enforceLockPoll = async () => {
     const state = await getState();
 
@@ -160,6 +150,7 @@ setInterval(enforceLockPoll, 1500);
 
 
 // Bug fix (https://github.com/aadidapurkar/lockin/issues/1)
+// When a locked tab is removed, the local storage needs to be updated (as well as icon)
 chrome.tabs.onRemoved.addListener(
   async (tabId : number, removeInfo : any) => {
         //console.log(`DEBUG EVENT`)
