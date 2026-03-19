@@ -210,3 +210,11 @@ chrome.commands.onCommand.addListener(async (command) => {
 
   }
 });
+
+// ux - when extn install/update provide users
+// with some info
+chrome.runtime.onInstalled.addListener((_) => {
+    chrome.tabs.create({
+      url: chrome.runtime.getURL('onboarding.html')
+    });
+})
