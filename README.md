@@ -1,8 +1,8 @@
 # [Lockin - Webstore](https://chromewebstore.google.com/detail/lockin/ekclemfcpeipfokbhiebmppdpecmapeh)
 
-How the pinned extension looks with no tab lock
+How the pinned extension looks with no tab lock <br>
 ![How the pinned extension looks with no tab lock](./demo-img-readme/sidebarPinUnlocked.jpg) <br>
-How the pinned extension looks with a tab lock
+How the pinned extension looks with a tab lock <br>
 ![How the pinned extension looks with a tab lock](./demo-img-readme/sidebarPinLocked.jpg) <br>
 How the extension popup looks <br>
 ![Extension Popup in Locked State](./demo-img-readme/lockedExample.jpg)
