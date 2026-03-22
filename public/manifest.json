@@ -1,7 +1,8 @@
 {
     "manifest_version": 3,
     "name": "Lockin",
-    "version": "1.5",
+    "version": "1.6",
+    "description": "Stay locked in to a particular tab, set limits on how many tabs you can have open, ban sites.",
     "action": {
         "default_popup": "index.html",
         "default_icon": "icon.png"
